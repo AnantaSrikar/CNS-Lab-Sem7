@@ -61,12 +61,13 @@ int main(int argc, char **argv)
 	// Close the input file
 	inFPtr.close();
 
-	cout<<file_data<<endl;
+	// Ze Function prototypes
+	void caesar(string, int, string);
 
 	switch(alg_choice)
 	{
 		case 1:
-				cout<<"Do da Caesar Cipher!"<<endl;
+				caesar(file_data, do_encrypt, KEY);
 				break;
 
 		case 2:
@@ -82,4 +83,33 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
+}
+
+void caesar(string file_data, int do_encrypt, string KEY)
+{
+	int KEY_VAL = stoi(KEY);
+
+	if(do_encrypt)
+	{
+		cout<<"Encrypted text:"<<endl;
+
+		for(int i = 0; i < file_data.length(); i++)
+		{
+			if(file_data[i] == ' ')
+			{
+				cout<<" ";
+				continue;
+			}
+			
+			cout<<char(file_data[i] + (KEY_VAL % 26));
+		}
+	}
+	
+	else
+	{
+		cout<<"Decrypted text:"<<endl;
+
+		for(int i = 0; i < file_data.length(); i++)
+			cout<<file_data[i] - (KEY_VAL % 26);
+	}
 }
