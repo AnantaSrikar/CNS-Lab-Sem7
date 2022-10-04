@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cctype>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	// String that will store the entire 
+	// String that will store the entire
 	string file_data;
 
 	// For storing the entire file contents in a string for easy manipulation! String Stream seems to be the best way!
@@ -93,15 +94,27 @@ void caesar(string file_data, int do_encrypt, string KEY)
 	{
 		cout<<"Encrypted text:"<<endl;
 
+		// Iterating through all characters in the file.
 		for(int i = 0; i < file_data.length(); i++)
 		{
-			if(file_data[i] == ' ')
+			// Check if character is an alphabet, print it directly if it isn't
+			if(!isalpha(file_data[i]))
 			{
-				cout<<" ";
+				cout<<file_data[i];
 				continue;
 			}
+
+			// Convert all character to uppercase. Only using uppercase as character set
+			char upper_char = (isupper(file_data[i])) ? file_data[i] : toupper(file_data[i]);
+
+			// Adding the key for the encryption
+			char encpt_out = upper_char + (KEY_VAL % 26);
+
+			// Rollover incase of value overflow
+			while(encpt_out > 90)
+				encpt_out -= 26;
 			
-			cout<<char(file_data[i] + (KEY_VAL % 26));
+			cout<<encpt_out;
 		}
 	}
 	
@@ -109,7 +122,27 @@ void caesar(string file_data, int do_encrypt, string KEY)
 	{
 		cout<<"Decrypted text:"<<endl;
 
+		// Iterating through all characters in the file.
 		for(int i = 0; i < file_data.length(); i++)
-			cout<<file_data[i] - (KEY_VAL % 26);
+		{
+			// Check if character is an alphabet, print it directly if it isn't
+			if(!isalpha(file_data[i]))
+			{
+				cout<<file_data[i];
+				continue;
+			}
+
+			// Convert all character to uppercase. Only using uppercase as character set
+			char upper_char = (isupper(file_data[i])) ? file_data[i] : toupper(file_data[i]);
+
+			// Adding the key for the encryption
+			char encpt_out = upper_char - (KEY_VAL % 26);
+
+			// Rollover incase of value overflow
+			while(encpt_out < 65)
+				encpt_out += 26;
+			
+			cout<<encpt_out;
+		}
 	}
 }
