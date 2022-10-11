@@ -263,6 +263,21 @@ int inMatrix(char matrix[5][5], char findChar)
 	return 0;
 }
 
+// Funtion to get the coordinates of a given character from the key table in playfair cipher
+int *getCoords(char **KEY_TABLE, char letter)
+{
+	int *coords = (int*)malloc(2 * sizeof(int));
+
+	for(int i = 0; i < 5; i++)
+		for(int j = 0; j < 5; j++)
+			if(KEY_TABLE[i][j] == letter || (KEY_TABLE[i][j] == 'I' && letter = 'J') || (KEY_TABLE[i][j] == 'J' && letter='I'))	// Again, the weird edge case for the cipher
+			{
+				coords[0] = i;
+				coords[1] = j;
+				return coords;
+			}
+}
+
 void playfair(string file_data, int do_encrypt, string KEY)
 {
 	// Check for sus characters in KEY
@@ -328,31 +343,30 @@ void playfair(string file_data, int do_encrypt, string KEY)
 	}
 
 	// Encryption
-	// if(!do_encrypt)
-	// {
-	// 	cout<<"Encrypted text:"<<endl;
+	if(!do_encrypt)
+	{
+		cout<<"Encrypted text:"<<endl;
 
-	// 	// Iterating through all characters in the file.
-	// 	for(int i = 0; i < file_data.length(); i++)
-	// 	{
-	// 		// Check if character is an alphabet, print it directly if it isn't
-	// 		if(!isalpha(file_data[i]))
-	// 		{
-	// 			cout<<file_data[i];
-	// 			continue;
-	// 		}
+		// Iterating through all characters in the file.
+		for(int i = 0; i < file_data.length(); i++)
+		{
+			// Check if character is an alphabet, print it directly if it isn't
+			if(!isalpha(file_data[i]))
+			{
+				cout<<file_data[i];
+				continue;
+			}
 
-	// 		// Adding the key for the encryption
-	// 		char encpt_out = file_data[i] + (KEY[key_track % KEY.length()] % 26);
+			// TODO: Take 2 chars and do the rectangle corner thing
+			// TODO: Find the opposite ends and print output
 
-	// 		// Rollover incase of value overflow
-	// 		while(encpt_out > 90)
-	// 			encpt_out -= 26;
+
 			
-	// 		cout<<encpt_out;
-	// 	}
-	// }
+			// cout<<encpt_out;
+		}
+	}
 
+	// TODO: Decryption
 	// // Decryption
 	// else
 	// {
