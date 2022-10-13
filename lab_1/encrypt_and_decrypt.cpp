@@ -11,7 +11,6 @@
 #include <fstream>
 #include <sstream>
 #include <cctype>
-#include <algorithm>
 
 using namespace std;
 
@@ -264,18 +263,27 @@ int inMatrix(char matrix[5][5], char findChar)
 }
 
 // Funtion to get the coordinates of a given character from the key table in playfair cipher
-int *getCoords(char **KEY_TABLE, char letter)
+int *getCoords(char KEY_TABLE[5][5], char letter)
 {
 	int *coords = (int*)malloc(2 * sizeof(int));
 
 	for(int i = 0; i < 5; i++)
 		for(int j = 0; j < 5; j++)
-			if(KEY_TABLE[i][j] == letter || (KEY_TABLE[i][j] == 'I' && letter = 'J') || (KEY_TABLE[i][j] == 'J' && letter='I'))	// Again, the weird edge case for the cipher
+			if(KEY_TABLE[i][j] == letter || (KEY_TABLE[i][j] == 'I' && letter == 'J') || (KEY_TABLE[i][j] == 'J' && letter == 'I'))	// Again, the weird edge case for the cipher
 			{
 				coords[0] = i;
 				coords[1] = j;
 				return coords;
 			}
+
+	// Incase we don't find the letter in the matrix
+	coords[0] = coords[1] = -1;
+	return coords;
+}
+
+char getCharAtCoords(char KEY_TABLE[5][5], int x, int y)
+{
+	return KEY_TABLE[x][y];
 }
 
 void playfair(string file_data, int do_encrypt, string KEY)
@@ -288,17 +296,18 @@ void playfair(string file_data, int do_encrypt, string KEY)
 			exit(-1);
 		}
 
+	// Converting key to uppercase to maintain consistency
 	KEY = strToUpper(KEY);
-
-	cout<<KEY<<endl;
 	
+	// To store the key table
 	char KEY_TABLE[5][5];
 
+	// Initializing the keytable with all 1s
 	for(int i = 0; i < 5; i ++)
 		for(int j = 0; j < 5; j++)
 			KEY_TABLE[i][j] = '1';
-
-
+	
+	// Variable to keep track of the 
 	int key_track = 0;
 
 	for(int i = 0; i < 5; i++)
@@ -314,6 +323,7 @@ void playfair(string file_data, int do_encrypt, string KEY)
 					else
 						break;
 
+				// Check if length of the key is lesser than 
 				if(key_track < KEY.length())
 					KEY_TABLE[i][j] = KEY[key_track++];
 				else
@@ -342,6 +352,10 @@ void playfair(string file_data, int do_encrypt, string KEY)
 		cout<<endl;
 	}
 
+	int char_reset = 0;
+	char letter_pair[2];
+	int *coords[2];
+
 	// Encryption
 	if(!do_encrypt)
 	{
@@ -357,8 +371,61 @@ void playfair(string file_data, int do_encrypt, string KEY)
 				continue;
 			}
 
+			if(!(getCoords(KEY_TABLE, file_data[i])[0] == -1))
+				letter_pair[char_reset++] = file_data[i];
+
 			// TODO: Take 2 chars and do the rectangle corner thing
-			// TODO: Find the opposite ends and print output
+			if(!(char_reset % 2))
+			{
+				char_reset = 0;
+				
+				// Getting the coordinates
+
+				for(int j = 0; j < 2; j++)
+					coords[j] = getCoords(KEY_TABLE, letter_pair[j]);
+				
+				for(int j = 0; j < 2; j++)
+				{
+					cout<<"'"<<letter_pair[j]<<"' ";
+					for(int k = 0; k < 2; k++)
+						cout<<coords[j][k]<<" ";
+					cout<<endl;
+				}
+				
+				char encrypted_pair[2];
+				// If in same column
+
+				if(coords[0][1] == coords[1][1])
+				{
+					cout<<"Same column! ";
+					for(int j = 0; j < 2; j++)
+					{
+						encrypted_pair[j] = getCharAtCoords(KEY_TABLE, ((coords[j][0] + 1) % 5), coords[j][1]);
+					}
+
+				}
+				
+				else if(coords[0][0] == coords[1][0])
+				{
+					cout<<"Same row! ";
+					for(int j = 0; j < 2; j++)
+					{
+						encrypted_pair[j] = getCharAtCoords(KEY_TABLE, coords[j][0], ((coords[j][1] + 1) % 5));
+					}
+				}
+				else
+				{
+					cout<<"Different row!";
+					// Exchange coordinates
+				}
+
+				// If not in row
+
+				// print encrypted pair
+
+				cout<<"HALLEUJIA!"<<endl<<endl;
+			}
+
 
 
 			
