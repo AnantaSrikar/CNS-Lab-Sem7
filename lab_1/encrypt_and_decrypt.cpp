@@ -374,62 +374,36 @@ void playfair(string file_data, int do_encrypt, string KEY)
 			if(!(getCoords(KEY_TABLE, file_data[i])[0] == -1))
 				letter_pair[char_reset++] = file_data[i];
 
-			// TODO: Take 2 chars and do the rectangle corner thing
+			// Takes every 2 characters encrypt them
 			if(!(char_reset % 2))
 			{
 				char_reset = 0;
 				
 				// Getting the coordinates
-
 				for(int j = 0; j < 2; j++)
 					coords[j] = getCoords(KEY_TABLE, letter_pair[j]);
 				
+				// Array to store encrypted text
+				char encrypted_pair[2];
+
 				for(int j = 0; j < 2; j++)
 				{
-					cout<<"'"<<letter_pair[j]<<"' ";
-					for(int k = 0; k < 2; k++)
-						cout<<coords[j][k]<<" ";
-					cout<<endl;
-				}
-				
-				char encrypted_pair[2];
-				// If in same column
-
-				if(coords[0][1] == coords[1][1])
-				{
-					cout<<"Same column! ";
-					for(int j = 0; j < 2; j++)
-					{
+					// Same column
+					if(coords[0][1] == coords[1][1])
 						encrypted_pair[j] = getCharAtCoords(KEY_TABLE, ((coords[j][0] + 1) % 5), coords[j][1]);
-					}
 
-				}
-				
-				else if(coords[0][0] == coords[1][0])
-				{
-					cout<<"Same row! ";
-					for(int j = 0; j < 2; j++)
-					{
+					// Same row
+					else if(coords[0][0] == coords[1][0])
 						encrypted_pair[j] = getCharAtCoords(KEY_TABLE, coords[j][0], ((coords[j][1] + 1) % 5));
-					}
-				}
-				else
-				{
-					cout<<"Different row!";
-					// Exchange coordinates
-				}
 
-				// If not in row
+					// Rectangle, take opposite corners
+					else
+						encrypted_pair[j] = getCharAtCoords(KEY_TABLE, coords[j][0], coords[(j + 1) % 2][1]);
+				}
 
 				// print encrypted pair
-
-				cout<<"HALLEUJIA!"<<endl<<endl;
+				cout<<encrypted_pair[0]<<encrypted_pair[1];
 			}
-
-
-
-			
-			// cout<<encpt_out;
 		}
 	}
 
