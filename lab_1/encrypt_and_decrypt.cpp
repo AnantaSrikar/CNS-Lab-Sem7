@@ -407,31 +407,54 @@ void playfair(string file_data, int do_encrypt, string KEY)
 		}
 	}
 
-	// TODO: Decryption
-	// // Decryption
-	// else
-	// {
-	// 	cout<<"Decrypted text:"<<endl;
+	// Decryption
+	else
+	{
+		cout<<"Decrypted text: ";
 
-	// 	// Iterating through all characters in the file.
-	// 	for(int i = 0; i < file_data.length(); i++)
-	// 	{
-	// 		// Check if character is an alphabet, print it directly if it isn't
-	// 		if(!isalpha(file_data[i]))
-	// 		{
-	// 			cout<<file_data[i];
-	// 			continue;
-	// 		}
+		// Iterating through all characters in the file.
+		for(int i = 0; i < file_data.length(); i++)
+		{
+			// Check if character is an alphabet, print it directly if it isn't
+			if(!isalpha(file_data[i]))
+			{
+				cout<<file_data[i];
+				continue;
+			}
 
-	// 		// Adding the key for the encryption
-	// 		char encpt_out = file_data[i] - (KEY[key_track % KEY.length()] % 26);
+			if(!(getCoords(KEY_TABLE, file_data[i])[0] == -1))
+				letter_pair[char_reset++] = file_data[i];
 
-	// 		// Rollover incase of value overflow
-	// 		while(encpt_out < 65)
-	// 			encpt_out += 26;
-			
-	// 		cout<<encpt_out;
-	// 		key_track++;
-	// 	}
-	// }
+			// Takes every 2 characters encrypt them
+			if(!(char_reset % 2))
+			{
+				char_reset = 0;
+				
+				// Getting the coordinates
+				for(int j = 0; j < 2; j++)
+					coords[j] = getCoords(KEY_TABLE, letter_pair[j]);
+				
+				// Array to store encrypted text
+				char decrypted_pair[2];
+
+				for(int j = 0; j < 2; j++)
+				{
+					// Same column
+					if(coords[0][1] == coords[1][1])
+						decrypted_pair[j] = getCharAtCoords(KEY_TABLE, ((coords[j][0] + 4) % 5), coords[j][1]);
+
+					// Same row
+					else if(coords[0][0] == coords[1][0])
+						decrypted_pair[j] = getCharAtCoords(KEY_TABLE, coords[j][0], ((coords[j][1] + 4) % 5));
+
+					// Rectangle, take opposite corners
+					else
+						decrypted_pair[j] = getCharAtCoords(KEY_TABLE, coords[j][0], coords[(j + 1) % 2][1]);
+				}
+
+				// print encrypted pair
+				cout<<decrypted_pair[0]<<decrypted_pair[1];
+			}
+		}
+	}
 }
