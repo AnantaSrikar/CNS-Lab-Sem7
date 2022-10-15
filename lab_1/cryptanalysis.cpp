@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	ifstream inFPtr("process.txt");	// Hardcoding ze name as per assignment requirements :)
+	ifstream inFPtr("vigenere-process.txt");	// Hardcoding ze name as per assignment requirements :)
 
 	// Check if file exists first before reading it duh?
 	if(!inFPtr.good())
@@ -111,14 +111,96 @@ string strToUpper(string the_string)
 
 void caesar(string file_data)
 {
-	cout<<"Caesar broo!!"<<endl;
+	cout<<"Caesar cipher cryptanalysis requested."<<endl;
 
-	// TODO: Find the most frequent alphabet in encrypted text
-	// Subtract it from most frequent alphabet in english character, i.e., E in our case
-	// Print the key and decrypt the text
+	// Array to store frequency of each of the 
+	int freq_count[26];
+
+	// Initialize the array to 0
+	for(int i = 0; i < 26; i++)
+		freq_count[i] = 0;
+
+	// Iterate through the string
+	for(int i = 0; i < file_data.length(); i++)
+	{
+		// If not a character, print and skip processing. Mostly not possible for the way input file is made, thanks prof!
+		if(!isalpha((file_data[i])))
+		{
+			cout<<file_data[i];
+			continue;
+		}
+
+		freq_count[int(file_data[i] - 'A')]++;
+	}
+
+	int max_freq_index = 0;
+
+	// Find word with max frequency
+	for(int i = 0; i < 26; i++)
+		if(freq_count[max_freq_index] < freq_count[i])
+			max_freq_index = i;
+
+	cout<<"Letter with max frequency: "<<char('A' + max_freq_index)<<endl;
+	int key = max_freq_index - 4;
+	cout<<"Key: "<<key<<endl;
+
+	cout<<"Decrypted text:"<<endl;
+
+	for(int i = 0; i < file_data.length(); i++)
+	{
+		char decpt_out = file_data[i] - key;
+		while(decpt_out < 65)
+			decpt_out += 26;
+
+		cout<<decpt_out;
+	}
 }
 
 void vigenere(string file_data)
 {
-	cout<<"Vigenere broo!"<<endl;
+	cout<<"Vigenere cipher cryptanalysis requested."<<endl;
+
+	cout<<"Finding key length..."<<endl;
+
+	int shift_freq[20];
+
+	for(int i = 0; i < 20; i++)
+		shift_freq[i] = 0;
+
+	for(int i = 1; i < 20; i++)
+	{
+		for(int w_index = 0; w_index < file_data.length(); w_index++)
+			if(file_data[w_index] == file_data[(w_index + i) % file_data.length()])
+				shift_freq[i]++;
+	}
+
+	int key_length = 0;
+
+	for(int i = 0; i < 20; i++)
+		if(shift_freq[key_length] < shift_freq[i])
+			key_length = i;
+
+	cout<<"Key length size: "<<key_length<<endl;
+
+	// for(int i = 0; i < file_data.length(); i++)
+	// 	cout<<file_data[i]<<endl;
+
+	string KEY;
+	string collection[key_length];
+
+	for(int i = 0; i < file_data.length(); i += key_length)
+		for(int j = 0; j < key_length; j++)
+		{
+			// cout<<i<<" "<<j<<endl;
+			cout<<i<<" "<<j<<" "<<file_data[i + j]<<endl;
+			// collection[key_length].push_back(file_data[i + j]);
+		}
+
+	for(int i = 0; i < key_length; i++)
+		cout<<collection[i]<<endl;
+
+
+
+	// break up cipher text
+	// Freq analysis
 }
